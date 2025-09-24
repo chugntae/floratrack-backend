@@ -61,8 +61,9 @@ def prever():
         return jsonify({'erro': 'Falha ao processar imagem'}), 500
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000)
+    app.run(host='0.0.0.0', port=int(os.environ.get("PORT", 10000)))
 
 print("📦 request.files:", request.files)
 print("📦 request.form:", request.form)
+
 print("📦 request.content_type:", request.content_type)
