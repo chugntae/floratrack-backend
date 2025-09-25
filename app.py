@@ -12,11 +12,11 @@ from modelo import prever_especie  # Função de predição
 app = Flask(__name__)
 CORS(app)
 
-# 🔧 Configuração do Cloudinary (pode usar variáveis de ambiente ou valores fixos)
+# 🔧 Configuração do Cloudinary com variáveis de ambiente
 cloudinary.config(
-    cloud_name=os.getenv('CLOUDINARY_CLOUD_NAME', 'degkyk3pz'),
-    api_key=os.getenv('CLOUDINARY_API_KEY', '975925238371755'),
-    api_secret=os.getenv('CLOUDINARY_API_SECRET', 'UwOdN4HIzd0jkL-tLtXjD6k0q30')
+    cloud_name=os.getenv('CLOUDINARY_CLOUD_NAME'),
+    api_key=os.getenv('CLOUDINARY_API_KEY'),
+    api_secret=os.getenv('CLOUDINARY_API_SECRET')
 )
 
 @app.route('/prever', methods=['POST'])
@@ -60,10 +60,6 @@ def prever():
         print(f"❌ Erro no upload ou predição: {e}")
         return jsonify({'erro': 'Falha ao processar imagem'}), 500
 
+# 🔧 Inicia o servidor Flask apenas localmente
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=int(os.environ.get("PORT", 10000)))
-
-print("📦 request.files:", request.files)
-print("📦 request.form:", request.form)
-
-print("📦 request.content_type:", request.content_type)
+    app.run(host='0.0.0.0', port=int(os.environ.get("PORT", 5000)))
