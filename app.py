@@ -5,6 +5,7 @@ import cloudinary.uploader
 import os
 import sys
 import traceback
+import time
 
 # 🔧 Garante que o Flask encontre o módulo 'modelo.py'
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
@@ -22,6 +23,7 @@ cloudinary.config(
 
 @app.route('/prever', methods=['POST'])
 def prever():
+    inicio = time.time()
     imagem = request.files.get('imagem')
 
     if not imagem or not imagem.mimetype.startswith('image/'):
@@ -34,12 +36,12 @@ def prever():
         # 🔧 Salva a imagem temporariamente
         temp_path = "temp.jpg"
         imagem.save(temp_path)
-        print("📸 Imagem salva em disco")
+        print(f"📸 Imagem salva em disco ({time.time() - inicio:.2f}s)")
 
         # 🔍 Chamada ao modelo de ML
         print("🧠 Chamando modelo...")
         especie_predita, confianca = prever_especie(temp_path)
-        print(f"✅ Modelo respondeu: {especie_predita} ({confianca:.2%})")
+        print(f"✅ Modelo respondeu: {especie_predita} ({confianca:.2%}) em {time.time() - inicio:.2f}s")
 
         if not especie_predita or not isinstance(confianca, (float, int)):
             print("⚠️ Modelo retornou valores inválidos")
@@ -53,6 +55,7 @@ def prever():
             folder=f"floraTrack/{especie_predita}",
             timeout=30
         )
+        print(f"☁️ Upload concluído em {time.time() - inicio:.2f}s")
 
         url_imagem = resultado_upload.get('secure_url')
         print(f"✅ Imagem enviada para Cloudinary: {url_imagem}")
@@ -64,7 +67,9 @@ def prever():
 
         # 🧹 Remove o arquivo temporário
         os.remove(temp_path)
-        print("🧹 Arquivo temporário removido")
+        print(f"🧹 Arquivo temporário removido ({time.time() - inicio:.2f}s)")
+
+        print(f"🏁 Tempo total de execução: {time.time() - inicio:.2f}s")
 
         return jsonify({
             'especie': especie_predita,
