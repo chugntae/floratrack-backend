@@ -6,6 +6,10 @@ import os
 import sys
 import traceback
 import time
+from dotenv import load_dotenv  # 🧬 Carrega variáveis do .env
+
+# 🔧 Carrega variáveis de ambiente do arquivo .env
+load_dotenv()
 
 # 🔧 Garante que o Flask encontre o módulo 'modelo.py'
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
@@ -16,9 +20,9 @@ CORS(app)
 
 # 🔧 Configuração do Cloudinary com variáveis de ambiente
 cloudinary.config(
-    cloud_name=os.environ.get('CLOUDINARY_CLOUD_NAME', 'FALHA'),
-    api_key=os.environ.get('CLOUDINARY_API_KEY', 'FALHA'),
-    api_secret=os.environ.get('CLOUDINARY_API_SECRET', 'FALHA')
+    cloud_name=os.getenv('CLOUDINARY_CLOUD_NAME', 'FALHA'),
+    api_key=os.getenv('CLOUDINARY_API_KEY', 'FALHA'),
+    api_secret=os.getenv('CLOUDINARY_API_SECRET', 'FALHA')
 )
 
 print("🔧 Cloudinary config:")
