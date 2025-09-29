@@ -16,10 +16,24 @@ CORS(app)
 
 # 🔧 Configuração do Cloudinary com variáveis de ambiente
 cloudinary.config(
-    cloud_name=os.getenv('CLOUDINARY_CLOUD_NAME'),
-    api_key=os.getenv('CLOUDINARY_API_KEY'),
-    api_secret=os.getenv('CLOUDINARY_API_SECRET')
+    cloud_name=os.environ.get('CLOUDINARY_CLOUD_NAME', 'FALHA'),
+    api_key=os.environ.get('CLOUDINARY_API_KEY', 'FALHA'),
+    api_secret=os.environ.get('CLOUDINARY_API_SECRET', 'FALHA')
 )
+
+print("🔧 Cloudinary config:")
+print("  cloud_name:", cloudinary.config().cloud_name)
+print("  api_key:", cloudinary.config().api_key)
+print("  api_secret:", cloudinary.config().api_secret)
+
+@app.route('/status', methods=['GET'])
+def status():
+    return jsonify({
+        'cloud_name': cloudinary.config().cloud_name,
+        'api_key': cloudinary.config().api_key,
+        'api_secret': cloudinary.config().api_secret,
+        'status': 'ok'
+    })
 
 @app.route('/prever', methods=['POST'])
 def prever():
