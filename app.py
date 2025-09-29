@@ -56,9 +56,9 @@ def prever():
         imagem.save(temp_path)
         print(f"📸 Imagem salva em disco ({time.time() - inicio:.2f}s)")
 
-        # 🔍 Chamada ao modelo de ML
+        # 🔍 Chamada ao modelo de ML com limiar mais baixo
         print("🧠 Chamando modelo...")
-        especie_predita, confianca = prever_especie(temp_path)
+        especie_predita, confianca = prever_especie(temp_path, limiar_confianca=0.2)
         print(f"✅ Modelo respondeu: {especie_predita} ({confianca:.2%}) em {time.time() - inicio:.2f}s")
 
         if not especie_predita or not isinstance(confianca, (float, int)):
@@ -105,3 +105,4 @@ def prever():
 # 🔧 Inicia o servidor Flask apenas localmente
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=int(os.environ.get("PORT", 5000)))
+
