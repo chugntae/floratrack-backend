@@ -6,9 +6,9 @@ import os
 import sys
 import traceback
 import time
-from dotenv import load_dotenv  # 🧬 Carrega variáveis do .env
+from dotenv import load_dotenv
 
-# 🔧 Carrega variáveis de ambiente do arquivo .env
+# 🔧 Carrega variáveis de ambiente do .env
 load_dotenv()
 
 # 🔧 Garante que o Flask encontre o módulo 'modelo.py'
@@ -18,17 +18,12 @@ from modelo import prever_especie  # Função de predição
 app = Flask(__name__)
 CORS(app)
 
-# 🔧 Configuração do Cloudinary com variáveis de ambiente
+# 🔧 Configuração do Cloudinary
 cloudinary.config(
     cloud_name=os.getenv('CLOUDINARY_CLOUD_NAME', 'FALHA'),
     api_key=os.getenv('CLOUDINARY_API_KEY', 'FALHA'),
     api_secret=os.getenv('CLOUDINARY_API_SECRET', 'FALHA')
 )
-
-print("🔧 Cloudinary config:")
-print("  cloud_name:", cloudinary.config().cloud_name)
-print("  api_key:", cloudinary.config().api_key)
-print("  api_secret:", cloudinary.config().api_secret)
 
 @app.route('/status', methods=['GET'])
 def status():
@@ -50,13 +45,10 @@ def prever():
 
     try:
         print(f"📥 Recebido arquivo: {imagem.filename}")
-
-        # 🔧 Salva a imagem temporariamente
         temp_path = "temp.jpg"
         imagem.save(temp_path)
         print(f"📸 Imagem salva em disco ({time.time() - inicio:.2f}s)")
 
-        # 🔍 Chamada ao modelo de ML com limiar mais baixo
         print("🧠 Chamando modelo...")
         especie_predita, confianca = prever_especie(temp_path, limiar_confianca=0.2)
         print(f"✅ Modelo respondeu: {especie_predita} ({confianca:.2%}) em {time.time() - inicio:.2f}s")
@@ -66,27 +58,17 @@ def prever():
             os.remove(temp_path)
             return jsonify({'erro': 'Falha na predição'}), 500
 
-        # 📤 Upload da imagem para Cloudinary
         print("☁️ Enviando imagem para Cloudinary...")
         resultado_upload = cloudinary.uploader.upload(
             temp_path,
             folder=f"floraTrack/{especie_predita}",
             timeout=30
         )
-        print(f"☁️ Upload concluído em {time.time() - inicio:.2f}s")
-
         url_imagem = resultado_upload.get('secure_url')
         print(f"✅ Imagem enviada para Cloudinary: {url_imagem}")
 
-        if not url_imagem:
-            print("⚠️ Cloudinary não retornou URL")
-            os.remove(temp_path)
-            return jsonify({'erro': 'Falha no upload da imagem'}), 500
-
-        # 🧹 Remove o arquivo temporário
         os.remove(temp_path)
         print(f"🧹 Arquivo temporário removido ({time.time() - inicio:.2f}s)")
-
         print(f"🏁 Tempo total de execução: {time.time() - inicio:.2f}s")
 
         return jsonify({
@@ -102,7 +84,7 @@ def prever():
             os.remove("temp.jpg")
         return jsonify({'erro': 'Falha ao processar imagem'}), 500
 
-# 🔧 Inicia o servidor Flask apenas localmente
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=int(os.environ.get("PORT", 5000)))
+
 
