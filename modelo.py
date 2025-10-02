@@ -39,7 +39,7 @@ def preprocess_image(file_path):
         print(f"❌ Erro ao pré-processar imagem: {e}")
         return None
 
-def prever_especie(file_path, limiar_confianca=0.5):
+def prever_especie(file_path):
     imagem_preprocessada = preprocess_image(file_path)
     if imagem_preprocessada is None:
         return "Desconhecida", 0.0
@@ -58,10 +58,11 @@ def prever_especie(file_path, limiar_confianca=0.5):
         print(f"🔍 Espécie: {especie}")
         print(f"🔍 Confiança: {confianca:.2%}")
 
-        if confianca >= limiar_confianca:
+        if confianca >= 0.5:
             return especie, confianca
+        elif confianca >= 0.35:
+            return f"Achamos que é {especie}", confianca
         else:
-            print(f"⚠️ Confiança abaixo do limiar ({limiar_confianca:.2%})")
             return "Desconhecida", confianca
 
     except Exception as e:
