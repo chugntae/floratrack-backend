@@ -50,7 +50,7 @@ def prever():
         print(f"📸 Imagem salva em disco ({time.time() - inicio:.2f}s)")
 
         print("🧠 Chamando modelo...")
-        especie_predita, confianca = prever_especie(temp_path, limiar_confianca=0.2)
+        especie_predita, confianca = prever_especie(temp_path)
         print(f"✅ Modelo respondeu: {especie_predita} ({confianca:.2%}) em {time.time() - inicio:.2f}s")
 
         if not especie_predita or not isinstance(confianca, (float, int)):
@@ -86,5 +86,6 @@ def prever():
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=int(os.environ.get("PORT", 5000)))
+
 
 
